@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Telecom Offer & Comparison Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for image export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('overview')">
+                <div class="bg-white/10 p-2 rounded-xl">
+                    <i class="fa-solid fa-tower-cell text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold flex items-center gap-2">Offer & Pricing Intelligence Hub</h1>
+                    <p class="text-xs text-indigo-200">Multi-Operator Competitor Benchmarking</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="downloadHTMLFile()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1.5 border border-indigo-500" title="Download App HTML">
+                    <i class="fa-solid fa-download"></i> Download App
+                </button>
+                <button onclick="openFormModal()" class="bg-white text-indigo-600 hover:bg-indigo-50 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Add Offer
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs for Companies -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[69px] z-20">
+        <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-2 py-2.5 no-scrollbar">
+            <button onclick="switchTab('overview')" id="tab_overview" class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-indigo-600 text-white shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-globe"></i> All Overview & Matrix
+            </button>
+            <button onclick="switchTab('Smartone')" id="tab_Smartone" class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> SmarTone
+            </button>
+            <button onclick="switchTab('CSL GoChill')" id="tab_CSL GoChill" class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block"></span> CSL GoChill
+            </button>
+            <button onclick="switchTab('CMHK s/ash')" id="tab_CMHK s/ash" class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span> CMHK s/ash
+            </button>
+            <button onclick="switchTab('MO+')" id="tab_MO+" class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span> MO+
+            </button>
+            <button onclick="switchTab('SunMobile')" id="tab_SunMobile" class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> SunMobile
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 pt-6 space-y-6">
+
+        <!-- OVERVIEW TAB CONTENT -->
+        <div id="content_overview" class="space-y-6">
+            <!-- Controls & Filters Bar -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="relative w-full sm:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="renderApp()" placeholder="Search plan, gifts, promo..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1">
+                        <button id="viewCardBtn" onclick="switchView('cards')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-600 shadow-sm transition">
+                            <i class="fa-solid fa-grip mr-1"></i> Cards
+                        </button>
+                        <button id="viewTableBtn" onclick="switchView('table')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-table mr-1"></i> Table
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards View Container -->
+            <div id="cardsViewContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Table View Container -->
+            <div id="tableViewContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-xs text-slate-500 uppercase tracking-wider">
+                                <th class="p-3.5 font-semibold">Company</th>
+                                <th class="p-3.5 font-semibold">Offer / Plan Title</th>
+                                <th class="p-3.5 font-semibold text-right">Original Fee</th>
+                                <th class="p-3.5 font-semibold text-right">Net Plan Fee</th>
+                                <th class="p-3.5 font-semibold">Local Data</th>
+                                <th class="p-3.5 font-semibold">Thereafter</th>
+                                <th class="p-3.5 font-semibold">GBA Data</th>
+                                <th class="p-3.5 font-semibold">Voice</th>
+                                <th class="p-3.5 font-semibold">China Voice</th>
+                                <th class="p-3.5 font-semibold">VAS</th>
+                                <th class="p-3.5 font-semibold">Promo</th>
+                                <th class="p-3.5 font-semibold">Admin Fee</th>
+                                <th class="p-3.5 font-semibold">Contract</th>
+                                <th class="p-3.5 font-semibold text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPANY INDIVIDUAL TABS CONTAINER -->
+        <div id="companyTabContainer" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="companyBadgeIcon" class="w-4 h-10 rounded-lg"></div>
+                    <div>
+                        <h2 id="companyTitleName" class="text-xl font-black text-slate-900">Company Name</h2>
+                        <p class="text-xs text-slate-400">Filtered offers and dedicated brand workspace</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportCompanyCSV(activeTab)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv"></i> Export Company CSV
+                    </button>
+                    <button onclick="openFormModalForCompany()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Add Offer
+                    </button>
+                </div>
+            </div>
+
+            <div id="companyOffersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically -->
+            </div>
+            <div id="companyEmptyState" class="hidden py-16 text-center text-slate-400 text-sm bg-white rounded-2xl border border-slate-100">
+                No offers recorded for this company yet. Click the button above to add one!
+            </div>
+        </div>
+
+        <div id="emptyState" class="hidden py-16 text-center text-slate-400 text-sm">
+            No offers found matching your search.
+        </div>
+
+    </main>
+
+    <!-- Offer Add/Edit Modal -->
+    <div id="offerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-indigo-600"></i> Add Telecommunications Offer
+                </h3>
+                <button onclick="closeFormModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="offerForm" onsubmit="saveOffer(event)" class="space-y-4">
+                <input type="hidden" id="offerId">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Company / Operator</label>
+                        <select id="inputCompany" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold">
+                            <option value="Smartone">SmarTone (Red)</option>
+                            <option value="CSL GoChill">CSL GoChill (Yellow)</option>
+                            <option value="CMHK s/ash">CMHK s/ash (Light Blue)</option>
+                            <option value="MO+">MO+ (Pink)</option>
+                            <option value="SunMobile">SunMobile (Orange)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Offer / Plan Title</label>
+                        <input type="text" id="inputBrand" placeholder="e.g., 5G 11.11 Offer" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Original Plan Fee ($)</label>
+                        <input type="text" id="inputOriginalFee" placeholder="e.g., $228" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Average Net Plan Fee ($)</label>
+                        <input type="text" id="inputNetFee" placeholder="e.g., $111 ($80+$37 rebate)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold bg-amber-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Contract Period</label>
+                        <input type="text" id="inputContract" placeholder="e.g., 24 Mths" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Local Data Entitlement</label>
+                        <input type="text" id="inputLocalData" placeholder="e.g., 50GB" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Thereafter Local Data</label>
+                        <input type="text" id="inputThereafter" placeholder="e.g., 1 Mbps" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">GBA Data</label>
+                        <input type="text" id="inputGbaData" placeholder="e.g., 3GB" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Local Voice Minutes</label>
+                        <input type="text" id="inputLocalVoice" placeholder="e.g., 3000 mins" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">China Roaming Voice</label>
+                        <input type="text" id="inputChinaVoice" placeholder="e.g., -" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Admin Fee</label>
+                        <input type="text" id="inputAdminFee" placeholder="e.g., Waived" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">VAS (Value Added Services)</label>
+                        <textarea id="inputVas" rows="2" placeholder="e.g., +$48/month 40GB WORLD Pass - Asia Pacific" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">11.11 / Promo Offer Highlights</label>
+                        <textarea id="inputPromo" rows="2" placeholder="e.g., 50GB Local Data; First 11 mths: 11GB GBA" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                </div>
+
+                <div class="pt-3 flex gap-3">
+                    <button type="button" onclick="closeFormModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">Cancel</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition">Save Offer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        const companyColors = {
+            "Smartone": { bg: "bg-red-500", text: "text-red-600", border: "border-red-200", badgeBg: "bg-red-50" },
+            "CSL GoChill": { bg: "bg-yellow-400", text: "text-yellow-600", border: "border-yellow-200", badgeBg: "bg-yellow-50" },
+            "CMHK s/ash": { bg: "bg-sky-400", text: "text-sky-600", border: "border-sky-200", badgeBg: "bg-sky-50" },
+            "MO+": { bg: "bg-pink-500", text: "text-pink-600", border: "border-pink-200", badgeBg: "bg-pink-50" },
+            "SunMobile": { bg: "bg-orange-500", text: "text-orange-600", border: "border-orange-200", badgeBg: "bg-orange-50" }
+        };
+
+        let currentView = 'cards';
+        let activeTab = 'overview';
+
+        let offers = JSON.parse(localStorage.getItem('telecom_offers_v2')) || [
+            {
+                id: 1,
+                company: "CMHK s/ash",
+                brand: "3HK 5G 11.11 Offer",
+                originalFee: "$228",
+                netFee: "$111<br><span class='text-xs font-normal text-slate-500'>($80+$37 monthly rebate)</span>",
+                contract: "24 Mths",
+                localData: "50GB",
+                thereafter: "1 Mbps",
+                gbaData: "3GB",
+                localVoice: "3000 mins",
+                chinaVoice: "-",
+                vas: "- +$48/month 40GB WORLD Pass - Asia Pacific",
+                promo: "- 50GB Local Data<br>- First 11 mths: 11GB GBA",
+                adminFee: "Waived"
+            },
+            {
+                id: 2,
+                company: "MO+",
+                brand: "MO+ 5G Flagship Plan",
+                originalFee: "$288",
+                netFee: "$188",
+                contract: "24 Mths",
+                localData: "120GB",
+                thereafter: "5 Mbps",
+                gbaData: "15GB",
+                localVoice: "10,000 mins",
+                chinaVoice: "500 mins",
+                vas: "Roam Like Home Included",
+                promo: "MagSafe Powerbank",
+                adminFee: "Waived"
+            }
+        ];
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const overviewEl = document.getElementById('content_overview');
+            const companyContainer = document.getElementById('companyTabContainer');
+
+            // Reset tab buttons style
+            ['overview', 'Smartone', 'CSL GoChill', 'CMHK s/ash', 'MO+', 'SunMobile'].forEach(t => {
+                const btn = document.getElementById(`tab_${t}`);
+                if(btn) {
+                    if(t === tab) {
+                        btn.className = "px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-indigo-600 text-white shadow-sm flex items-center gap-2";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2";
+                    }
+                }
+            });
+
+            if (tab === 'overview') {
+                overviewEl.classList.remove('hidden');
+                companyContainer.classList.add('hidden');
+                renderApp();
+            } else {
+                overviewEl.classList.add('hidden');
+                companyContainer.classList.remove('hidden');
+                renderCompanyWorkspace(tab);
+            }
+        }
+
+        function switchView(view) {
+            currentView = view;
+            const cardsContainer = document.getElementById('cardsViewContainer');
+            const tableContainer = document.getElementById('tableViewContainer');
+            const cardBtn = document.getElementById('viewCardBtn');
+            const tableBtn = document.getElementById('viewTableBtn');
+
+            if (view === 'cards') {
+                cardsContainer.classList.remove('hidden');
+                tableContainer.classList.add('hidden');
+                cardBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-600 shadow-sm transition";
+                tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+            } else {
+                cardsContainer.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
+                tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-600 shadow-sm transition";
+                cardBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+            }
+            renderApp();
+        }
+
+        function renderApp() {
+            localStorage.setItem('telecom_offers_v2', JSON.stringify(offers));
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = offers.filter(o => 
+                o.company.toLowerCase().includes(query) ||
+                o.brand.toLowerCase().includes(query) ||
+                (o.promo && o.promo.toLowerCase().includes(query)) ||
+                o.localData.toLowerCase().includes(query)
+            );
+
+            const cardsContainer = document.getElementById('cardsViewContainer');
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            cardsContainer.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(o => {
+                cardsContainer.appendChild(createOfferCardElement(o));
+
+                // Table Row
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition border-b border-slate-50 text-xs";
+                const col = companyColors[o.company] || { bg: 'bg-indigo-500', badgeBg: 'bg-indigo-50', text: 'text-indigo-700' };
+                tr.innerHTML = `
+                    <td class="p-3.5"><span class="${col.badgeBg} ${col.text} font-bold px-2.5 py-1 rounded-lg text-xs inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${col.bg}"></span>${o.company}</span></td>
+                    <td class="p-3.5 font-bold text-slate-900">${o.brand}</td>
+                    <td class="p-3.5 text-right font-medium text-slate-500 line-through">${o.originalFee}</td>
+                    <td class="p-3.5 text-right font-black text-indigo-600 bg-amber-50/40">${o.netFee}</td>
+                    <td class="p-3.5 font-semibold text-slate-800">${o.localData}</td>
+                    <td class="p-3.5 text-slate-600">${o.thereafter || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${o.gbaData || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${o.localVoice}</td>
+                    <td class="p-3.5 text-slate-600">${o.chinaVoice || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${o.vas || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${o.promo || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${o.adminFee || '-'}</td>
+                    <td class="p-3.5 font-semibold text-slate-800">${o.contract || '-'}</td>
+                    <td class="p-3.5 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="editOffer(${o.id})" class="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteOffer(${o.id})" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg" title="Delete"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function renderCompanyWorkspace(companyName) {
+            const grid = document.getElementById('companyOffersGrid');
+            const empty = document.getElementById('companyEmptyState');
+            const titleEl = document.getElementById('companyTitleName');
+            const badgeIcon = document.getElementById('companyBadgeIcon');
+
+            titleEl.innerText = companyName;
+            const col = companyColors[companyName] || { bg: 'bg-indigo-500' };
+            badgeIcon.className = `w-3 h-10 rounded-lg ${col.bg}`;
+
+            const companyOffers = offers.filter(o => o.company === companyName);
+            grid.innerHTML = '';
+
+            if (companyOffers.length === 0) {
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                companyOffers.forEach(o => {
+                    grid.appendChild(createOfferCardElement(o));
+                });
+            }
+        }
+
+        function createOfferCardElement(o) {
+            const col = companyColors[o.company] || { bg: 'bg-indigo-500', badgeBg: 'bg-indigo-50', text: 'text-indigo-700' };
+            
+            const cardId = `exportable_card_${o.id}`;
+            const div = document.createElement('div');
+            div.className = "bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between hover:shadow-md transition";
+            div.innerHTML = `
+                <div id="${cardId}" class="p-5 bg-white space-y-3">
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                        <span class="${col.badgeBg} ${col.text} font-bold px-2.5 py-1 rounded-lg text-xs inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${col.bg}"></span>${o.company}</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Offer Summary</span>
+                    </div>
+
+                    <!-- Image-matched layout as requested -->
+                    <div class="border border-slate-300 rounded-xl overflow-hidden text-xs">
+                        <div class="bg-slate-100 font-bold text-slate-900 p-2 text-center border-b border-slate-300 text-sm">
+                            ${o.brand}
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Original Plan Fee</div>
+                            <div class="p-2 text-center font-medium text-slate-500 line-through flex items-center justify-center">${o.originalFee}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300 bg-amber-50/60">
+                            <div class="p-2 border-r border-slate-300 font-bold text-slate-900 flex items-center">Average Net plan Fee</div>
+                            <div class="p-2 text-center font-black text-indigo-700 text-sm flex flex-col items-center justify-center">${o.netFee}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Local Data Entitlement</div>
+                            <div class="p-2 text-center font-bold text-slate-800 flex items-center justify-center">${o.localData}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Thereafter Local</div>
+                            <div class="p-2 text-center text-slate-700 flex items-center justify-center">${o.thereafter || '-'}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">GBA Data</div>
+                            <div class="p-2 text-center text-slate-700 flex items-center justify-center">${o.gbaData || '-'}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Local voice</div>
+                            <div class="p-2 text-center text-slate-700 flex items-center justify-center">${o.localVoice}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">China Roaming voice</div>
+                            <div class="p-2 text-center text-slate-700 flex items-center justify-center">${o.chinaVoice || '-'}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">VAS</div>
+                            <div class="p-2 text-center text-slate-700 whitespace-pre-line flex items-center justify-center">${o.vas || '-'}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Promo / Offer</div>
+                            <div class="p-2 text-center text-slate-700 whitespace-pre-line flex items-center justify-center">${o.promo || '-'}</div>
+                        </div>
+                        <div class="grid grid-cols-2 border-b border-slate-300">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Admin Fee</div>
+                            <div class="p-2 text-center text-slate-700 flex items-center justify-center">${o.adminFee || '-'}</div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <div class="p-2 border-r border-slate-300 font-semibold text-slate-600 bg-slate-50 flex items-center">Contract period</div>
+                            <div class="p-2 text-center font-bold text-slate-900 flex items-center justify-center">${o.contract || '-'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex gap-2 flex-wrap sm:flex-nowrap">
+                    <button onclick="exportCardAsImage('${cardId}', '${o.brand}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm whitespace-nowrap">
+                        <i class="fa-solid fa-camera"></i> Image
+                    </button>
+                    <button onclick="exportCardAsCSV(${o.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm whitespace-nowrap">
+                        <i class="fa-solid fa-file-csv"></i> CSV
+                    </button>
+                    <button onclick="editOffer(${o.id})" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button onclick="deleteOffer(${o.id})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-2 rounded-xl text-xs font-semibold transition" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+            return div;
+        }
+
+        
+        
+        function exportCompanyCSV(companyName) {
+            const companyOffers = offers.filter(o => o.company === companyName);
+            if(companyOffers.length === 0) {
+                alert("No offers available for this company to export.");
+                return;
+            }
+
+            // Metrics as rows, and each offer as a column (sharing metrics, only name and entry fields different)
+            const metricRows = [
+                { label: "Offer / Plan Title", key: "brand" },
+                { label: "Original Plan Fee", key: "originalFee" },
+                { label: "Average Net Plan Fee", key: "netFee", stripHtml: true },
+                { label: "Contract Period", key: "contract" },
+                { label: "Local Data Entitlement", key: "localData" },
+                { label: "Thereafter Local Data", key: "thereafter" },
+                { label: "GBA Data", key: "gbaData" },
+                { label: "Local Voice Minutes", key: "localVoice" },
+                { label: "China Roaming Voice", key: "chinaVoice" },
+                { label: "VAS", key: "vas", stripHtml: true },
+                { label: "Promo / Offer", key: "promo", stripHtml: true },
+                { label: "Admin Fee", key: "adminFee" }
+            ];
+
+            // Header row: Metric Name, Offer 1 Name, Offer 2 Name, ...
+            let headers = ["Metric / Field"];
+            companyOffers.forEach(o => headers.push(o.brand));
+
+            let rows = [];
+            metricRows.forEach(m => {
+                let rowData = [m.label];
+                companyOffers.forEach(o => {
+                    let val = o[m.key] || "";
+                    if(m.stripHtml) {
+                        val = val.replace(/<[^>]*>?/gm, '');
+                    }
+                    rowData.push(val);
+                });
+                rows.push(rowData);
+            });
+
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.map(h => `"` + String(h).replace(/"/g, '""') + `"`).join(",") + "
+" 
+                + rows.map(e => e.map(val => `"` + String(val || "").replace(/"/g, '""') + `"`).join(",")).join("
+");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${companyName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_all_offers_matrix.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportCardAsCSV(id) {
+            const o = offers.find(item => item.id === id);
+            if(!o) return;
+
+            const headers = ["Field", "Value"];
+            const rows = [
+                ["Company / Operator", o.company],
+                ["Offer / Plan Title", o.brand],
+                ["Original Plan Fee", o.originalFee],
+                ["Average Net Plan Fee", o.netFee.replace(/<[^>]*>?/gm, '')],
+                ["Contract Period", o.contract],
+                ["Local Data Entitlement", o.localData],
+                ["Thereafter Local Data", o.thereafter],
+                ["GBA Data", o.gbaData],
+                ["Local Voice Minutes", o.localVoice],
+                ["China Roaming Voice", o.chinaVoice],
+                ["VAS", o.vas.replace(/<[^>]*>?/gm, '')],
+                ["Promo / Offer", o.promo.replace(/<[^>]*>?/gm, '')],
+                ["Admin Fee", o.adminFee]
+            ];
+
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n" 
+                + rows.map(e => e.map(val => `"` + String(val || "").replace(/"/g, '""') + `"`).join(",")).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${o.brand.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_offer.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportCardAsImage(elementId, brandName) {
+            const el = document.getElementById(elementId);
+            if(!el) return;
+            
+            // Temporary scale for crisp export
+            html2canvas(el, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${brandName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_offer.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function openFormModal(id = null, defaultCompany = null) {
+            document.getElementById('offerForm').reset();
+            document.getElementById('offerId').value = '';
+            
+            if (defaultCompany) {
+                document.getElementById('inputCompany').value = defaultCompany;
+            }
+
+            if (id) {
+                const o = offers.find(item => item.id === id);
+                if (o) {
+                    document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-600"></i> Edit Telecommunications Offer`;
+                    document.getElementById('offerId').value = o.id;
+                    document.getElementById('inputCompany').value = o.company;
+                    document.getElementById('inputBrand').value = o.brand;
+                    document.getElementById('inputOriginalFee').value = o.originalFee;
+                    document.getElementById('inputNetFee').value = o.netFee;
+                    document.getElementById('inputContract').value = o.contract;
+                    document.getElementById('inputLocalData').value = o.localData;
+                    document.getElementById('inputThereafter').value = o.thereafter;
+                    document.getElementById('inputGbaData').value = o.gbaData;
+                    document.getElementById('inputLocalVoice').value = o.localVoice;
+                    document.getElementById('inputChinaVoice').value = o.chinaVoice;
+                    document.getElementById('inputVas').value = o.vas;
+                    document.getElementById('inputPromo').value = o.promo;
+                    document.getElementById('inputAdminFee').value = o.adminFee;
+                }
+            } else {
+                document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-600"></i> Add Telecommunications Offer`;
+            }
+            document.getElementById('offerModal').classList.remove('hidden');
+        }
+
+        function openFormModalForCompany() {
+            if(activeTab !== 'overview') {
+                openFormModal(null, activeTab);
+            } else {
+                openFormModal();
+            }
+        }
+
+        function closeFormModal() {
+            document.getElementById('offerModal').classList.add('hidden');
+        }
+
+        function saveOffer(e) {
+            e.preventDefault();
+            const id = document.getElementById('offerId').value;
+            const newObj = {
+                id: id ? Number(id) : Date.now(),
+                company: document.getElementById('inputCompany').value,
+                brand: document.getElementById('inputBrand').value,
+                originalFee: document.getElementById('inputOriginalFee').value,
+                netFee: document.getElementById('inputNetFee').value,
+                contract: document.getElementById('inputContract').value,
+                localData: document.getElementById('inputLocalData').value,
+                thereafter: document.getElementById('inputThereafter').value,
+                gbaData: document.getElementById('inputGbaData').value,
+                localVoice: document.getElementById('inputLocalVoice').value,
+                chinaVoice: document.getElementById('inputChinaVoice').value,
+                vas: document.getElementById('inputVas').value,
+                promo: document.getElementById('inputPromo').value,
+                adminFee: document.getElementById('inputAdminFee').value
+            };
+
+            if (id) {
+                const idx = offers.findIndex(item => item.id === Number(id));
+                if (idx !== -1) offers[idx] = newObj;
+            } else {
+                offers.unshift(newObj);
+            }
+
+            closeFormModal();
+            if(activeTab === 'overview') {
+                renderApp();
+            } else {
+                renderCompanyWorkspace(activeTab);
+            }
+        }
+
+        function editOffer(id) {
+            openFormModal(id);
+        }
+
+        function deleteOffer(id) {
+            if (confirm("Are you sure you want to delete this offer?")) {
+                offers = offers.filter(item => item.id !== id);
+                if(activeTab === 'overview') {
+                    renderApp();
+                } else {
+                    renderCompanyWorkspace(activeTab);
+                }
+            }
+        }
+
+        function downloadHTMLFile() {
+            const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize on load
+        renderApp();
+    </script>
+</body>
+</html>
